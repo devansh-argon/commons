@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
@@ -45,4 +46,17 @@ dependencies {
     implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     implementation("com.google.android.ump:user-messaging-platform:2.2.0")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components.findByName("release"))
+                groupId = "com.github.Nirav186"
+                artifactId = "commons"
+                version = "0.0.6"
+            }
+        }
+    }
 }

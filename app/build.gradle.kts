@@ -3,7 +3,6 @@ import com.android.build.gradle.internal.scope.publishBuildArtifacts
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("maven-publish")
 }
 
 android {
@@ -48,17 +47,4 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components.findByName("release"))
-                groupId = "com.github.Nirav186"
-                artifactId = "commons"
-                version = "0.0.6"
-            }
-        }
-    }
 }
