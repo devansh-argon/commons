@@ -1,4 +1,4 @@
-package com.nirav.commons
+package com.nirav.commons.test
 
 import android.os.Bundle
 import android.provider.Settings

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nirav.commons"
+    namespace = "com.nirav.commons.test"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.nirav.commons"
+        applicationId = "com.nirav.commons.test"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
