@@ -19,6 +19,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
@@ -34,6 +35,8 @@ import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.google.gson.Gson
 import com.nirav.commons.R
 import com.nirav.commons.databinding.DialogExitBinding
@@ -44,6 +47,7 @@ object CommonAdManager {
 
     private var nativeAd: NativeAd? = null
     var interstitialAd: InterstitialAd? = null
+    var rewardedInterstitialAd: RewardedInterstitialAd? = null
 
     var lastTimeStampForInter: Long = 0
     fun isAdReadyToShow() =
@@ -89,6 +93,7 @@ object CommonAdManager {
             Handler(Looper.getMainLooper()).postDelayed({
                 loadIntertitialAd(activity)
                 loadNativeAd(activity)
+                loadRewardedAd(activity)
                 onAdsInitialized()
                 if (adModel.isAppOpenAdActive) {
                     AppOpenAdManager(application, adModel.appOpenId, activity)
@@ -302,5 +307,35 @@ object CommonAdManager {
             binding.frameLayoutAd.showNativeAd()
         }
         dialog.show()
+    }
+
+    fun showRewardAd(activity: Activity, onRewardEarned: () -> Unit) {
+        if (rewardedInterstitialAd == null) {
+            Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
+            loadRewardedAd(activity)
+        } else {
+            rewardedInterstitialAd?.show(
+                activity
+            ) {
+                onRewardEarned()
+            }
+            loadRewardedAd(activity)
+        }
+    }
+
+    private fun loadRewardedAd(context: Context) {
+        RewardedInterstitialAd.load(context, adModel.rewardId,
+            AdRequest.Builder().build(), object :
+                RewardedInterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: RewardedInterstitialAd) {
+                    Log.d("TAG", "Ad was loaded.")
+                    rewardedInterstitialAd = ad
+                }
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("TAG", adError.message)
+                    rewardedInterstitialAd = null
+                }
+            })
     }
 }

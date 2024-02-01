@@ -74,7 +74,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.0.9"
+                version = "0.1.0"
             }
         }
     }
