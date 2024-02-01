@@ -31,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -46,6 +49,22 @@ dependencies {
     implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     implementation("com.google.android.ump:user-messaging-platform:2.2.0")
+
+    //sdp
+    implementation("com.intuit.sdp:sdp-android:1.1.0")
+    //sdp
+
+    //ads
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    //ads
+
+    //gson
+    implementation("com.google.code.gson:gson:2.10.1")
+    //gson
+
+    //lifecycle
+    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
+    //lifecycle
 }
 
 afterEvaluate {
@@ -55,7 +74,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.0.8"
+                version = "0.0.9"
             }
         }
     }
