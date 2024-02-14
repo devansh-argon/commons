@@ -104,7 +104,7 @@ object CommonAdManager {
         }
     }
 
-    private fun loadIntertitialAd(context: Context) {
+    fun loadIntertitialAd(context: Context) {
         if (interstitialAd != null) return
         InterstitialAd.load(
             context,
@@ -131,6 +131,7 @@ object CommonAdManager {
         } else {
             interstitialAd?.show(this)
             lastTimeStampForInter = System.currentTimeMillis()
+            interstitialAd = null
             loadIntertitialAd(this)
         }
     }
@@ -324,6 +325,7 @@ object CommonAdManager {
     }
 
     private fun loadRewardedAd(context: Context) {
+        if (adModel.isRewardAdActive.not()) return
         RewardedInterstitialAd.load(context, adModel.rewardId,
             AdRequest.Builder().build(), object :
                 RewardedInterstitialAdLoadCallback() {
