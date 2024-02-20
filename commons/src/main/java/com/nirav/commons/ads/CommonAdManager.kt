@@ -340,4 +340,8 @@ object CommonAdManager {
                 }
             })
     }
+
+    fun isBannerAdIsEnabled() = adModel.isBannerAdActive
+
+    fun getBannerId() = adModel.bannerId
 }

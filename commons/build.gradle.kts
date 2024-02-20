@@ -33,6 +33,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 }
 
@@ -65,6 +66,10 @@ dependencies {
     //lifecycle
     implementation("androidx.lifecycle:lifecycle-process:2.7.0")
     //lifecycle
+
+    //compose
+    implementation("androidx.activity:activity-compose:1.8.2")
+    //compose
 }
 
 afterEvaluate {
@@ -74,7 +79,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.1.1"
+                version = "0.1.2"
             }
         }
     }
