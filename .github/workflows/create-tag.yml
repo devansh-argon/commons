@@ -18,3 +18,6 @@ jobs:
           git config --local user.name "Nirav Rangapariya"
           git tag -a v1.0.7 -m "Auto-generated tag by GitHub Action"
           git push origin --tags
+
+        env:
+          GITHUB_TOKEN: "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"
