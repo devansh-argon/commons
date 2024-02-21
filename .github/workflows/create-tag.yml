@@ -16,5 +16,5 @@ jobs:
         run: |
           git config --local user.email "nrvrangapariya186@gmail.com"
           git config --local user.name "Nirav Rangapariya"
-          git tag -a v1.0.6 -m "Auto-generated tag by GitHub Action"
+          git tag -a v1.0.7 -m "Auto-generated tag by GitHub Action"
           git push origin --tags
