@@ -38,6 +38,7 @@ import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.google.gson.Gson
+import com.nirav.commons.CommonGdprDialog
 import com.nirav.commons.R
 import com.nirav.commons.databinding.DialogExitBinding
 
@@ -66,17 +67,42 @@ object CommonAdManager {
         if (adModel.isAppIdActive) {
             MobileAds.initialize(activity)
             setAppId(
-                application = application,
                 activity = activity,
                 onAdsInitialized = onAdsInitialized
             )
         }
     }
 
-    private fun setAppId(
+    fun initWithGdpr(
         activity: Activity,
+        jsonString: String,
         onAdsInitialized: () -> Unit,
         application: Application
+    ) {
+        val gson = Gson()
+        val adModel = gson.fromJson(jsonString, AdModel::class.java)
+        Log.e("TAG111", "init: $adModel")
+        if (adModel.isAppIdActive) {
+            MobileAds.initialize(activity)
+            setAppId(
+                activity = activity,
+                onAdsInitialized = onAdsInitialized
+            )
+            CommonGdprDialog.checkGDPR(activity) {
+                this.adModel = adModel
+                loadIntertitialAd(activity)
+                loadNativeAd(activity)
+                loadRewardedAd(activity)
+                if (CommonAdManager.adModel.isAppOpenAdActive) {
+                    AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+                }
+            }
+        }
+    }
+
+    private fun setAppId(
+        activity: Activity,
+        onAdsInitialized: () -> Unit
     ) {
         try {
             val ai = activity.packageManager.getApplicationInfo(
@@ -91,13 +117,7 @@ object CommonAdManager {
                 adModel.appId
             )
             Handler(Looper.getMainLooper()).postDelayed({
-                loadIntertitialAd(activity)
-                loadNativeAd(activity)
-                loadRewardedAd(activity)
                 onAdsInitialized()
-                if (adModel.isAppOpenAdActive) {
-                    AppOpenAdManager(application, adModel.appOpenId, activity)
-                }
             }, 1000)
         } catch (e: Exception) {
             Log.e("TAG000", "Failed to load meta-data, NameNotFound: " + e.message)
@@ -173,15 +193,25 @@ object CommonAdManager {
         }
     }
 
+    fun FrameLayout.showExitNativeAd() {
+        nativeAd?.let {
+            setBigNativeAd(this.context, this, true, it, true)
+        }
+    }
+
     private fun setBigNativeAd(
         context: Context,
         frameLayout: FrameLayout?,
         isShowMedia: Boolean = true,
-        nativeAd: NativeAd
+        nativeAd: NativeAd,
+        isExitDialog: Boolean = false
     ) {
         val inflater = LayoutInflater.from(context)
-        val adView: NativeAdView =
+        val adView: NativeAdView = if (isExitDialog) {
+            inflater.inflate(R.layout.exit_dialog_native_ad, null) as NativeAdView
+        } else {
             inflater.inflate(R.layout.layout_big_native_ad_mob, null) as NativeAdView
+        }
         if (frameLayout != null) {
             frameLayout.removeAllViews()
             frameLayout.addView(adView)
