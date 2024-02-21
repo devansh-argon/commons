@@ -5,4 +5,5 @@
     <color name="black">#000000</color>
     <color name="ad_desc_color">#9CA6A6</color>
     <color name="ad_bg_color">#ECFFFF</color>
+    <color name="ad_border_color">#838383</color>
 </resources>
