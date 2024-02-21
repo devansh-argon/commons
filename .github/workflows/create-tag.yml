@@ -20,4 +20,4 @@ jobs:
           git push origin --tags
 
         env:
-          GITHUB_TOKEN: "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"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
