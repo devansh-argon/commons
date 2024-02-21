@@ -105,6 +105,7 @@ object CommonAdManager {
     }
 
     fun loadIntertitialAd(context: Context) {
+        if (adModel.isInterstitialAdActive.not()) return
         if (interstitialAd != null) return
         InterstitialAd.load(
             context,
@@ -137,6 +138,7 @@ object CommonAdManager {
     }
 
     fun Context.showBannerAd(frameLayout: FrameLayout) {
+        if (adModel.isBannerAdActive.not()) return
         val adView = AdView(this)
         adView.setAdSize(AdSize.BANNER)
         adView.adUnitId = adModel.bannerId
