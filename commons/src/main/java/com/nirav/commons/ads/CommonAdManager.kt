@@ -86,17 +86,20 @@ object CommonAdManager {
             MobileAds.initialize(activity)
             setAppId(
                 activity = activity,
-                onAdsInitialized = onAdsInitialized
-            )
-            CommonGdprDialog.checkGDPR(activity) {
-                this.adModel = adModel
-                loadIntertitialAd(activity)
-                loadNativeAd(activity)
-                loadRewardedAd(activity)
-                if (CommonAdManager.adModel.isAppOpenAdActive) {
-                    AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+                onAdsInitialized = {
+                    CommonGdprDialog.checkGDPR(activity) {
+                        this.adModel = adModel
+                        loadIntertitialAd(activity)
+                        loadNativeAd(activity)
+                        loadRewardedAd(activity)
+                        onAdsInitialized()
+                        if (CommonAdManager.adModel.isAppOpenAdActive) {
+                            AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+                        }
+                    }
                 }
-            }
+            )
+
         }
     }
 
