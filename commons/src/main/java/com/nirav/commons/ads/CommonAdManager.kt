@@ -68,7 +68,15 @@ object CommonAdManager {
             MobileAds.initialize(activity)
             setAppId(
                 activity = activity,
-                onAdsInitialized = onAdsInitialized
+                onAdsInitialized = {
+                    loadIntertitialAd(activity)
+                    loadNativeAd(activity)
+                    loadRewardedAd(activity)
+                    onAdsInitialized()
+                    if (CommonAdManager.adModel.isAppOpenAdActive) {
+                        AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+                    }
+                }
             )
         }
     }
