@@ -14,7 +14,7 @@ Maven:
 <dependency>
   <groupId>com.github.Nirav186</groupId>
   <artifactId>commons</artifactId>
-  <version>0.0.9</version>
+  <version>latest-version</version>
 </dependency>
 ```
 
