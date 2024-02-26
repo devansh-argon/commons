@@ -102,7 +102,11 @@ object CommonAdManager {
                         loadRewardedAd(activity)
                         onAdsInitialized()
                         if (CommonAdManager.adModel.isAppOpenAdActive) {
-                            AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+                            AppOpenAdManager(
+                                application,
+                                CommonAdManager.adModel.appOpenId,
+                                activity
+                            )
                         }
                     }
                 }
@@ -382,6 +386,43 @@ object CommonAdManager {
                     rewardedInterstitialAd = null
                 }
             })
+    }
+
+    fun FrameLayout.loadAndShowNativeAd(context: Context) {
+        if (adModel.isNativeAdActive.not()) return
+        val builder: AdLoader.Builder?
+        builder = AdLoader.Builder(context, adModel.nativeId)
+        builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
+           setBigNativeAd(
+               context =context,
+               frameLayout = this,
+               nativeAd = unifiedNativeAd,
+               isExitDialog = false
+           )
+        })
+        builder.withAdListener(object : AdListener() {
+            override fun onAdClosed() {
+                super.onAdClosed()
+                Log.d("TAG111", "onAdClosed:")
+            }
+
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                super.onAdFailedToLoad(loadAdError)
+                Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
+            }
+
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d("TAG111", "onAdLoaded: ")
+            }
+        })
+        val videoOptions = VideoOptions.Builder()
+            .setStartMuted(true)
+            .build()
+        val adOptions = NativeAdOptions.Builder().setVideoOptions(videoOptions).build()
+        builder.withNativeAdOptions(adOptions)
+        val adLoader = builder.build()
+        adLoader.loadAd(AdRequest.Builder().build())
     }
 
     fun isBannerAdIsEnabled() = adModel.isBannerAdActive
