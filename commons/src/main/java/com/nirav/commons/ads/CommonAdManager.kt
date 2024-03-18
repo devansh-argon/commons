@@ -352,7 +352,7 @@ object CommonAdManager {
             finish()
         }
         if (withAd) {
-            binding.frameLayoutAd.showNativeAd()
+            binding.frameLayoutAd.showExitNativeAd()
         }
         dialog.show()
     }
