@@ -57,5 +57,5 @@ Use this function to fetch remote configs :
 
 Put below line in colors file to handle colors of button in exit dialog :
 ```kotlin
-<color name="colorPrimary">put your app theme color</color>
+<color name="dialogThemeColor">put your theme color</color>
 ```
