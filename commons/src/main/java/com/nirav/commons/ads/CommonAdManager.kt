@@ -25,6 +25,7 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.VideoController
@@ -357,11 +358,21 @@ object CommonAdManager {
         dialog.show()
     }
 
-    fun showRewardAd(activity: Activity, onRewardEarned: () -> Unit) {
+    fun showRewardAd(
+        activity: Activity,
+        onRewardEarned: () -> Unit,
+        onAdDismiss: (() -> Unit)? = null
+    ) {
         if (rewardedInterstitialAd == null) {
             Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
             loadRewardedAd(activity)
         } else {
+            rewardedInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent()
+                    onAdDismiss?.invoke()
+                }
+            }
             rewardedInterstitialAd?.show(
                 activity
             ) {
@@ -393,12 +404,12 @@ object CommonAdManager {
         val builder: AdLoader.Builder?
         builder = AdLoader.Builder(context, adModel.nativeId)
         builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
-           setBigNativeAd(
-               context =context,
-               frameLayout = this,
-               nativeAd = unifiedNativeAd,
-               isExitDialog = false
-           )
+            setBigNativeAd(
+                context = context,
+                frameLayout = this,
+                nativeAd = unifiedNativeAd,
+                isExitDialog = false
+            )
         })
         builder.withAdListener(object : AdListener() {
             override fun onAdClosed() {
