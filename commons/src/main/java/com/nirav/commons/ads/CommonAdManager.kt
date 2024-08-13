@@ -140,7 +140,11 @@ object CommonAdManager {
         }
     }
 
-    fun loadIntertitialAd(context: Context) {
+    fun loadIntertitialAd(
+        context: Context,
+        onAdLoaded: (() -> Unit)? = null,
+        onAdLoadFailed: ((String) -> Unit)? = null,
+    ) {
         if (adModel.isInterstitialAdActive.not()) return
         if (interstitialAd != null) return
         InterstitialAd.load(
@@ -150,10 +154,12 @@ object CommonAdManager {
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     Log.d("TAG", adError.message)
+                    onAdLoadFailed?.invoke(adError.message)
                     interstitialAd = null
                 }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
+                    onAdLoaded?.invoke()
                     Log.d("TAG", "Ad was loaded.(interstitial)")
                     interstitialAd = ad
                 }
@@ -300,7 +306,11 @@ object CommonAdManager {
         }
     }
 
-    fun loadNativeAd(context: Context) {
+    fun loadNativeAd(
+        context: Context,
+        onAdLoaded: (() -> Unit)? = null,
+        onAdLoadFailed: ((String) -> Unit)? = null
+    ) {
         if (adModel.isNativeAdActive) {
             if (nativeAd == null) {
                 val builder: AdLoader.Builder?
@@ -317,11 +327,13 @@ object CommonAdManager {
                     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                         super.onAdFailedToLoad(loadAdError)
                         Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
+                        onAdLoadFailed?.invoke(loadAdError.message)
                     }
 
                     override fun onAdLoaded() {
                         super.onAdLoaded()
                         Log.d("TAG111", "onAdLoaded: ")
+                        onAdLoaded?.invoke()
                     }
                 })
                 val videoOptions = VideoOptions.Builder()
