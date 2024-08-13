@@ -154,7 +154,7 @@ object CommonAdManager {
                 }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    Log.d("TAG", "Ad was loaded.")
+                    Log.d("TAG", "Ad was loaded.(interstitial)")
                     interstitialAd = ad
                 }
             }
@@ -331,8 +331,14 @@ object CommonAdManager {
                 builder.withNativeAdOptions(adOptions)
                 val adLoader = builder.build()
                 adLoader.loadAd(AdRequest.Builder().build())
+                nativeAd = null
             }
         }
+    }
+
+    fun loadNewNativeAd(context: Context) {
+        nativeAd = null
+        loadNativeAd(context)
     }
 
     fun Activity.showExitDialog(withAd: Boolean = false) {
@@ -391,7 +397,7 @@ object CommonAdManager {
             AdRequest.Builder().build(), object :
                 RewardedInterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedInterstitialAd) {
-                    Log.d("TAG", "Ad was loaded.")
+                    Log.d("TAG", "Ad was loaded.(reward)")
                     rewardedInterstitialAd = ad
                 }
 
