@@ -206,6 +206,8 @@ object CommonAdManager {
     fun FrameLayout.showNativeAd() {
         nativeAd?.let {
             setBigNativeAd(this.context, this, true, it)
+        } ?: run {
+            loadAndShowNativeAd(this@showNativeAd.context)
         }
     }
 
@@ -298,7 +300,7 @@ object CommonAdManager {
         }
     }
 
-    private fun loadNativeAd(context: Context) {
+    fun loadNativeAd(context: Context) {
         if (adModel.isNativeAdActive) {
             if (nativeAd == null) {
                 val builder: AdLoader.Builder?
@@ -367,12 +369,13 @@ object CommonAdManager {
             Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
             loadRewardedAd(activity)
         } else {
-            rewardedInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    super.onAdDismissedFullScreenContent()
-                    onAdDismiss?.invoke()
+            rewardedInterstitialAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent()
+                        onAdDismiss?.invoke()
+                    }
                 }
-            }
             rewardedInterstitialAd?.show(
                 activity
             ) {
@@ -441,4 +444,6 @@ object CommonAdManager {
     fun getBannerId() = adModel.bannerId
 
     fun getNativeAd() = nativeAd
+
+    fun isInterstitialAdInitialized() = interstitialAd != null
 }

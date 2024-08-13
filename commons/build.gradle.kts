@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.nirav.commons"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24
@@ -61,7 +61,7 @@ dependencies {
     //sdp
 
     //ads
-    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    implementation("com.google.android.gms:play-services-ads:23.3.0")
     //ads
 
     //gson
@@ -84,7 +84,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.2.8"
+                version = "0.2.9"
             }
         }
     }
