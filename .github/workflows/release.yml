@@ -31,14 +31,14 @@ jobs:
 
       - name: Build and Publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub Token for authentication
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure this is set correctly
         run: ./gradlew clean build publishReleasePublicationToMavenRepository
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure this is set correctly
         with:
           tag_name: "v${{ github.sha }}"
           release_name: "Release v${{ github.sha }}"
@@ -52,3 +52,5 @@ jobs:
           asset_path: ./commons/build/outputs/aar/commons-release.aar
           asset_name: commons-release.aar
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure this is set correctly
