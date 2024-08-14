@@ -3,7 +3,7 @@ name: Publish Release
 on:
   push:
     branches:
-      - master  # Updated to trigger on the `master` branch
+      - master
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # Use 'temurin' for JDK 17
+          distribution: 'temurin'
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
@@ -47,6 +47,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./commons/build/outputs/aar/commons-release.aar  # Updated path for `commons` module
+          asset_path: ./commons/build/outputs/aar/commons-release.aar
           asset_name: commons-release.aar
           asset_content_type: application/zip
