@@ -89,11 +89,10 @@ afterEvaluate {
         }
         repositories {
             maven {
-//                url = uri("https://your.maven.repo.url")  // Replace with your Maven repository URL
                 url = uri("https://maven.pkg.github.com/Nirav186/commons")
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR") ?: ""
-                    password = System.getenv("GITHUB_TOKEN") ?: ""
+                    username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                    password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
                 }
             }
         }

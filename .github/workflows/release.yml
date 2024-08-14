@@ -30,6 +30,8 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build and Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub Token for authentication
         run: ./gradlew clean build publishReleasePublicationToMavenRepository
 
       - name: Create Release
