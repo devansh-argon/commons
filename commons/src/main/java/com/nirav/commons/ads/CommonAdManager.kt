@@ -43,6 +43,8 @@ import com.nirav.commons.CommonGdprDialog
 import com.nirav.commons.R
 import com.nirav.commons.databinding.DialogExitBinding
 
+val TAG = "CommonAdManager"
+
 object CommonAdManager {
 
     private var adModel = AdModel()
@@ -153,15 +155,15 @@ object CommonAdManager {
             AdRequest.Builder().build(),
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d("TAG", adError.message)
-                    onAdLoadFailed?.invoke(adError.message)
+                    Log.d(TAG, adError.message)
                     interstitialAd = null
+                    onAdLoadFailed?.invoke(adError.message)
                 }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    onAdLoaded?.invoke()
-                    Log.d("TAG", "Ad was loaded.(interstitial)")
+                    Log.d(TAG, "Ad was loaded.(interstitial)")
                     interstitialAd = ad
+                    onAdLoaded?.invoke()
                 }
             }
         )
@@ -302,7 +304,7 @@ object CommonAdManager {
             nativeAd.let { adView.setNativeAd(it) }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("TAG", "populateUnifiedNativeAdView Exception: " + e.message)
+            Log.e(TAG, "populateUnifiedNativeAdView Exception: " + e.message)
         }
     }
 
@@ -409,12 +411,12 @@ object CommonAdManager {
             AdRequest.Builder().build(), object :
                 RewardedInterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedInterstitialAd) {
-                    Log.d("TAG", "Ad was loaded.(reward)")
+                    Log.d(TAG, "Ad was loaded.(reward)")
                     rewardedInterstitialAd = ad
                 }
 
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d("TAG", adError.message)
+                    Log.d(TAG, adError.message)
                     rewardedInterstitialAd = null
                 }
             })

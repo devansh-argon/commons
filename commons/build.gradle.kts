@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-
+        version = "0.3.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -84,7 +84,13 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.3.1"
+                version = project.property("version").toString()
+            }
+            create<MavenPublication>("aar") {
+                from(components.findByName("release"))
+                groupId = "com.github.Nirav186"
+                artifactId = "commons"
+                version = project.property("version").toString()
             }
         }
     }
