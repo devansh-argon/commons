@@ -84,13 +84,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = project.property("version").toString()
-            }
-            create<MavenPublication>("aar") {
-                from(components.findByName("release"))
-                groupId = "com.github.Nirav186"
-                artifactId = "commons"
-                version = project.property("version").toString()
+                version = "0.3.2"
             }
         }
     }
