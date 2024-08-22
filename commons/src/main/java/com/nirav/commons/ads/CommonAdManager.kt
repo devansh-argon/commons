@@ -20,6 +20,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
@@ -28,6 +29,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -36,6 +38,8 @@ import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.google.gson.Gson
@@ -52,6 +56,7 @@ object CommonAdManager {
     private var nativeAd: NativeAd? = null
     var interstitialAd: InterstitialAd? = null
     var rewardedInterstitialAd: RewardedInterstitialAd? = null
+    var rewardedAd: RewardedAd? = null
 
     var lastTimeStampForInter: Long = 0
     fun isAdReadyToShow() =
@@ -74,13 +79,80 @@ object CommonAdManager {
                 onAdsInitialized = {
                     loadIntertitialAd(activity)
                     loadNativeAd(activity)
-                    loadRewardedAd(activity)
+                    loadRewardedInterstitialAd(activity)
+                    loadRewardAd(activity)
                     onAdsInitialized()
                     if (CommonAdManager.adModel.isAppOpenAdActive) {
                         AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
                     }
                 }
             )
+        }
+    }
+
+    private fun loadRewardAd(
+        activity: Activity,
+        onAdLoaded: (() -> Unit)? = null,
+        onAdLoadFailed: ((String) -> Unit)? = null
+    ) {
+        RewardedAd.load(activity, "ca-app-pub-3940256099942544/5224354917",
+            AdRequest.Builder().build(),
+            object : RewardedAdLoadCallback() {
+                override fun onAdLoaded(p0: RewardedAd) {
+                    super.onAdLoaded(p0)
+                    rewardedAd = p0
+                    onAdLoaded?.invoke()
+                }
+
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    super.onAdFailedToLoad(p0)
+                    rewardedAd = null
+                    onAdLoadFailed?.invoke(p0.message)
+                }
+            })
+    }
+
+    fun Activity.showRewardAd(
+        failedCallBack: ((String) -> Unit)? = null,
+        onRewardEarned: () -> Unit
+    ) {
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                Log.d(TAG, "Ad was clicked.")
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                // Set the ad reference to null so you don't show the ad a second time.
+                Log.d(TAG, "Ad dismissed fullscreen content.")
+                rewardedAd = null
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                // Called when ad fails to show.
+                Log.e(TAG, "Ad failed to show fullscreen content.")
+                rewardedAd = null
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                Log.d(TAG, "Ad recorded an impression.")
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                Log.d(TAG, "Ad showed fullscreen content.")
+            }
+        }
+        rewardedAd?.let { ad ->
+            ad.show(this) {
+                Log.d(TAG, "User earned the reward.")
+                onRewardEarned()
+            }
+        } ?: run {
+            failedCallBack?.invoke("The rewarded ad wasn't ready yet.")
+            Log.d(TAG, "The rewarded ad wasn't ready yet.")
         }
     }
 
@@ -102,7 +174,7 @@ object CommonAdManager {
                         this.adModel = adModel
                         loadIntertitialAd(activity)
                         loadNativeAd(activity)
-                        loadRewardedAd(activity)
+                        loadRewardedInterstitialAd(activity)
                         onAdsInitialized()
                         if (CommonAdManager.adModel.isAppOpenAdActive) {
                             AppOpenAdManager(
@@ -169,11 +241,17 @@ object CommonAdManager {
         )
     }
 
-    fun Activity.showInterstitialAd() {
+    fun Activity.showInterstitialAd(onAdDismiss: (() -> Unit)? = null) {
         if (!isAdReadyToShow()) return
         if (interstitialAd == null) {
             loadIntertitialAd(this)
         } else {
+            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent()
+                    onAdDismiss?.invoke()
+                }
+            }
             interstitialAd?.show(this)
             lastTimeStampForInter = System.currentTimeMillis()
             interstitialAd = null
@@ -380,14 +458,14 @@ object CommonAdManager {
         dialog.show()
     }
 
-    fun showRewardAd(
+    fun showRewardInterstitialAd(
         activity: Activity,
         onRewardEarned: () -> Unit,
         onAdDismiss: (() -> Unit)? = null
     ) {
         if (rewardedInterstitialAd == null) {
             Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
-            loadRewardedAd(activity)
+            loadRewardedInterstitialAd(activity)
         } else {
             rewardedInterstitialAd?.fullScreenContentCallback =
                 object : FullScreenContentCallback() {
@@ -401,11 +479,11 @@ object CommonAdManager {
             ) {
                 onRewardEarned()
             }
-            loadRewardedAd(activity)
+            loadRewardedInterstitialAd(activity)
         }
     }
 
-    private fun loadRewardedAd(context: Context) {
+    private fun loadRewardedInterstitialAd(context: Context) {
         if (adModel.isRewardAdActive.not()) return
         RewardedInterstitialAd.load(context, adModel.rewardId,
             AdRequest.Builder().build(), object :
