@@ -241,9 +241,13 @@ object CommonAdManager {
         )
     }
 
-    fun Activity.showInterstitialAd(onAdDismiss: (() -> Unit)? = null) {
+    fun Activity.showInterstitialAd(
+        adNotAvailable: (() -> Unit)? = null,
+        onAdDismiss: (() -> Unit)? = null
+    ) {
         if (!isAdReadyToShow()) return
         if (interstitialAd == null) {
+            adNotAvailable?.invoke()
             loadIntertitialAd(this)
         } else {
             interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
@@ -461,9 +465,11 @@ object CommonAdManager {
     fun showRewardInterstitialAd(
         activity: Activity,
         onRewardEarned: () -> Unit,
+        adNotAvailable: (() -> Unit)? = null,
         onAdDismiss: (() -> Unit)? = null
     ) {
         if (rewardedInterstitialAd == null) {
+            adNotAvailable?.invoke()
             Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
             loadRewardedInterstitialAd(activity)
         } else {
