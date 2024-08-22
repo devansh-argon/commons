@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-        version = "0.3.5"
+        version = "0.3.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -84,17 +84,17 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.3.5"
+                version = "0.3.6"
             }
         }
-        repositories {
-            maven {
-                url = uri("https://maven.pkg.github.com/Nirav186/commons")
-                credentials {
-                    username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
-                    password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
-                }
-            }
-        }
+//        repositories {
+//            maven {
+//                url = uri("https://maven.pkg.github.com/Nirav186/commons")
+//                credentials {
+//                    username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+//                    password = project.findProperty("gpr.token") as String? ?: System.getenv("GITHUB_TOKEN")
+//                }
+//            }
+//        }
     }
 }
