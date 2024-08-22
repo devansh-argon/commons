@@ -95,7 +95,7 @@ object CommonAdManager {
         onAdLoaded: (() -> Unit)? = null,
         onAdLoadFailed: ((String) -> Unit)? = null
     ) {
-        RewardedAd.load(activity, "ca-app-pub-3940256099942544/5224354917",
+        RewardedAd.load(activity, adModel.rewardId,
             AdRequest.Builder().build(),
             object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(p0: RewardedAd) {
@@ -151,6 +151,7 @@ object CommonAdManager {
                 onRewardEarned()
             }
         } ?: run {
+            loadRewardAd(this)
             failedCallBack?.invoke("The rewarded ad wasn't ready yet.")
             Log.d(TAG, "The rewarded ad wasn't ready yet.")
         }
@@ -490,8 +491,8 @@ object CommonAdManager {
     }
 
     private fun loadRewardedInterstitialAd(context: Context) {
-        if (adModel.isRewardAdActive.not()) return
-        RewardedInterstitialAd.load(context, adModel.rewardId,
+        if (adModel.isRewardInterstitialAdActive.not()) return
+        RewardedInterstitialAd.load(context, adModel.rewardInterstitialId,
             AdRequest.Builder().build(), object :
                 RewardedInterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedInterstitialAd) {
