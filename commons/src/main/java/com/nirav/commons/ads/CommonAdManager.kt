@@ -150,6 +150,7 @@ object CommonAdManager {
                 Log.d(TAG, "User earned the reward.")
                 onRewardEarned()
             }
+            loadRewardAd(this)
         } ?: run {
             loadRewardAd(this)
             failedCallBack?.invoke("The rewarded ad wasn't ready yet.")
