@@ -19,7 +19,6 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -29,7 +28,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -472,7 +470,6 @@ object CommonAdManager {
     ) {
         if (rewardedInterstitialAd == null) {
             adNotAvailable?.invoke()
-            Toast.makeText(activity, "Ad is not loaded", Toast.LENGTH_SHORT).show()
             loadRewardedInterstitialAd(activity)
         } else {
             rewardedInterstitialAd?.fullScreenContentCallback =
