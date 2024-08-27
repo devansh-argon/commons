@@ -263,6 +263,27 @@ object CommonAdManager {
         }
     }
 
+    fun Activity.showInterstitialAdWithoutInterval(
+        adNotAvailable: (() -> Unit)? = null,
+        onAdDismiss: (() -> Unit)? = null
+    ) {
+        if (interstitialAd == null) {
+            adNotAvailable?.invoke()
+            loadIntertitialAd(this)
+        } else {
+            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent()
+                    onAdDismiss?.invoke()
+                }
+            }
+            interstitialAd?.show(this)
+            lastTimeStampForInter = System.currentTimeMillis()
+            interstitialAd = null
+            loadIntertitialAd(this)
+        }
+    }
+
     fun Context.showBannerAd(frameLayout: FrameLayout) {
         if (adModel.isBannerAdActive.not()) return
         val adView = AdView(this)
