@@ -43,6 +43,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 import com.google.gson.Gson
 import com.nirav.commons.CommonGdprDialog
 import com.nirav.commons.R
+import com.nirav.commons.ads.utils.getAdaptiveBannerWidth
 import com.nirav.commons.databinding.DialogExitBinding
 
 val TAG = "CommonAdManager"
@@ -288,6 +289,26 @@ object CommonAdManager {
         if (adModel.isBannerAdActive.not()) return
         val adView = AdView(this)
         adView.setAdSize(AdSize.BANNER)
+        adView.adUnitId = adModel.bannerId
+        frameLayout.addView(adView)
+        adView.loadAd(AdRequest.Builder().build())
+        adView.adListener = object : AdListener() {
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                super.onAdFailedToLoad(p0)
+                Log.e("TAG11111", "onAdFailedToLoad: " + p0.message)
+            }
+
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.e("TAG11111", "onAdLoaded: ")
+            }
+        }
+    }
+
+    fun Context.showAdaptiveBannerAd(frameLayout: FrameLayout) {
+        if (adModel.isBannerAdActive.not()) return
+        val adView = AdView(this)
+        adView.setAdSize(getAdaptiveBannerWidth())
         adView.adUnitId = adModel.bannerId
         frameLayout.addView(adView)
         adView.loadAd(AdRequest.Builder().build())
