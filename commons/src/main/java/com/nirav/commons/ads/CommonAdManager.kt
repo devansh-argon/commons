@@ -577,7 +577,7 @@ object CommonAdManager {
         val shimmerView = inflater.inflate(
             R.layout.simmer_layout_small,
             null
-        ) as NativeAdView
+        )
         removeAllViews()
         addView(shimmerView)
     }
