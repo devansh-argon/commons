@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
@@ -15,6 +16,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.OnHierarchyChangeListener
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -29,6 +31,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.VideoController
+import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -479,6 +482,97 @@ object CommonAdManager {
         loadNativeAd(context)
     }
 
+    fun Context.showSmallNativeAd(
+        frameLayout: FrameLayout?,
+        nativeAd: NativeAd,
+        isShowMedia: Boolean
+    ) {
+        if (isNetworkAvailable(this)) {
+            val inflater = LayoutInflater.from(this)
+            val adView = inflater.inflate(
+                R.layout.layout_small_native_ad_mob_with_media,
+                null
+            ) as NativeAdView
+            if (frameLayout != null) {
+                frameLayout.removeAllViews()
+                frameLayout.addView(adView)
+            }
+            try {
+                if (isShowMedia) {
+                    val mediaView = adView.findViewById<MediaView>(R.id.mediaView)
+                    mediaView.mediaContent = nativeAd.mediaContent
+                    mediaView.setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
+                        override fun onChildViewAdded(parent: View, child: View) {
+                            if (child is ImageView) {
+                                child.adjustViewBounds = true
+                            }
+                        }
+
+                        override fun onChildViewRemoved(parent: View, child: View) {
+                        }
+                    })
+
+                    adView.mediaView = mediaView
+                    adView.mediaView!!.visibility = View.VISIBLE
+                } else {
+                    if (adView.mediaView != null) {
+                        adView.mediaView!!.visibility = View.GONE
+                    }
+                }
+                adView.headlineView = adView.findViewById(R.id.adTitle)
+                adView.bodyView = adView.findViewById(R.id.adDescription)
+                adView.advertiserView = adView.findViewById(R.id.adAdvertiser)
+                adView.callToActionView = adView.findViewById(R.id.callToAction)
+                (adView.headlineView as TextView?)!!.text = nativeAd.headline
+                if (nativeAd.body == null) {
+                    adView.bodyView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.bodyView!!.visibility = View.VISIBLE
+                    (adView.bodyView as TextView?)!!.text = nativeAd.body
+                }
+                if (nativeAd.icon == null) {
+                    adView.iconView!!.visibility = View.GONE
+                } else {
+//                    ((ImageView) adView.getIconView()).setImageDrawable(nativeAd.getIcon().getDrawable());
+//                    adView.getIconView().setVisibility(View.VISIBLE);
+                }
+
+                if (nativeAd.callToAction == null) {
+                    adView.callToActionView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.callToActionView!!.visibility = View.VISIBLE
+                    (adView.callToActionView as Button?)!!.text = nativeAd.callToAction
+                }
+
+                if (nativeAd.advertiser == null) {
+                    adView.advertiserView!!.visibility = View.GONE
+                } else {
+                    (adView.advertiserView as TextView?)!!.text = nativeAd.advertiser
+                    adView.advertiserView!!.visibility = View.VISIBLE
+                }
+
+                //                adView.setNativeAd(nativeAd);
+                val vc = nativeAd.mediaContent!!.videoController
+                vc.mute(true)
+                if (vc.hasVideoContent()) {
+                    vc.videoLifecycleCallbacks = object : VideoLifecycleCallbacks() {
+                        override fun onVideoEnd() {
+                            super.onVideoEnd()
+                        }
+                    }
+                }
+                if (frameLayout != null) {
+                    frameLayout.visibility = View.VISIBLE
+                }
+
+                adView.setNativeAd(nativeAd)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                Log.e("TAG", "populateUnifiedNativeAdView Exception: " + e.message)
+            }
+        }
+    }
+
     fun Activity.showExitDialog(withAd: Boolean = false) {
         val dialog = Dialog(this)
         val binding = DialogExitBinding.inflate(LayoutInflater.from(this))
@@ -547,17 +641,21 @@ object CommonAdManager {
             })
     }
 
-    fun FrameLayout.loadAndShowNativeAd(context: Context) {
+    fun FrameLayout.loadAndShowNativeAd(context: Context, isBig: Boolean = true) {
         if (adModel.isNativeAdActive.not()) return
         val builder: AdLoader.Builder?
         builder = AdLoader.Builder(context, adModel.nativeId)
         builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
-            setBigNativeAd(
-                context = context,
-                frameLayout = this,
-                nativeAd = unifiedNativeAd,
-                isExitDialog = false
-            )
+            if (isBig) {
+                setBigNativeAd(
+                    context = context,
+                    frameLayout = this,
+                    nativeAd = unifiedNativeAd,
+                    isExitDialog = false
+                )
+            } else {
+                context.showSmallNativeAd(this, unifiedNativeAd, true)
+            }
         })
         builder.withAdListener(object : AdListener() {
             override fun onAdClosed() {

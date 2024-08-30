@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.nativead.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ad_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="0dp"
+        android:layout_margin="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_78sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.4"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:paddingBottom="@dimen/_2sdp"
+                        android:paddingLeft="@dimen/_2sdp">
+                        <FrameLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <com.google.android.gms.ads.nativead.MediaView
+                                android:id="@+id/mediaView"
+                                android:layout_gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                            <ImageView
+                                android:layout_gravity="center"
+                                android:visibility="gone"
+                                android:id="@+id/mediaView1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/_8sdp"
+                        android:paddingRight="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_8sdp">
+
+                        <TextView
+                            android:id="@+id/adTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11sdp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/adAttribute"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ad_background"
+                                android:gravity="center"
+                                android:paddingLeft="@dimen/_3sdp"
+                                android:paddingRight="@dimen/_3sdp"
+                                android:text="@string/Ad"
+                                android:textColor="@color/ad_desc_color"
+                                android:textSize="@dimen/_7sdp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/adDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_2sdp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/subtitle_list_color"
+                                android:textSize="@dimen/_8sdp" />
+                        </LinearLayout>
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/adAdvertiser"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:visibility="gone"
+                            android:gravity="center_vertical"
+                            android:text="SPONSORED"
+                            android:singleLine="true"
+                            android:textColor="@color/subtitle_list_color"
+                            android:textSize="@dimen/_7sdp" />
+
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/callToAction"
+                            android:gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_32sdp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:layout_marginLeft="@dimen/_12sdp"
+                            android:layout_marginRight="@dimen/_12sdp"
+                            android:background="@drawable/bg_button"
+                            android:text="@string/install"
+                            android:translationZ="@dimen/_12sdp"
+                            android:elevation="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/_13sdp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</com.google.android.gms.ads.nativead.NativeAdView>
