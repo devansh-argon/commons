@@ -75,6 +75,9 @@ dependencies {
     //compose
     implementation("androidx.activity:activity-compose:1.8.2")
     //compose
+
+    //simmer layout
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
 
 afterEvaluate {
@@ -84,7 +87,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
                 artifactId = "commons"
-                version = "0.4.3"
+                version = "0.4.4"
             }
         }
 //        repositories {

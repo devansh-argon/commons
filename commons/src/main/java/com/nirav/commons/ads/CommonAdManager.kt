@@ -5,7 +5,6 @@ import android.app.Application
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
@@ -573,6 +572,16 @@ object CommonAdManager {
         }
     }
 
+    private fun FrameLayout.addShimmer() {
+        val inflater = LayoutInflater.from(this.context)
+        val shimmerView = inflater.inflate(
+            R.layout.simmer_layout_small,
+            null
+        ) as NativeAdView
+        removeAllViews()
+        addView(shimmerView)
+    }
+
     fun Activity.showExitDialog(withAd: Boolean = false) {
         val dialog = Dialog(this)
         val binding = DialogExitBinding.inflate(LayoutInflater.from(this))
@@ -643,6 +652,7 @@ object CommonAdManager {
 
     fun FrameLayout.loadAndShowNativeAd(context: Context, isBig: Boolean = true) {
         if (adModel.isNativeAdActive.not()) return
+        addShimmer()
         val builder: AdLoader.Builder?
         builder = AdLoader.Builder(context, adModel.nativeId)
         builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
