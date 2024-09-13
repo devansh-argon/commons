@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -86,8 +85,8 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
-                artifactId = "commons"
-                version = "0.4.5"
+                artifactId = "Nirav-Commons"
+                version = "1.0.0"
             }
         }
 //        repositories {

@@ -45,6 +45,7 @@ class AppOpenAdManager : Application.ActivityLifecycleCallbacks {
         }
         application.registerActivityLifecycleCallbacks(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleEventObserver)
+        loadAd(activity)
     }
 
 

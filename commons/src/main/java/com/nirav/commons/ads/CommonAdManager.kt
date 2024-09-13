@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
 import android.net.ConnectivityManager
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -20,6 +21,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -60,6 +62,7 @@ object CommonAdManager {
     var rewardedAd: RewardedAd? = null
 
     var lastTimeStampForInter: Long = 0
+
     fun isAdReadyToShow() =
         (System.currentTimeMillis() - lastTimeStampForInter) > adModel.adsTimeInterval
 
@@ -83,9 +86,9 @@ object CommonAdManager {
                     loadRewardedInterstitialAd(activity)
                     loadRewardAd(activity)
                     onAdsInitialized()
-                    if (CommonAdManager.adModel.isAppOpenAdActive) {
-                        AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
-                    }
+//                    if (CommonAdManager.adModel.isAppOpenAdActive) {
+//                        AppOpenAdManager(application, CommonAdManager.adModel.appOpenId, activity)
+//                    }
                 }
             )
         }
@@ -289,10 +292,10 @@ object CommonAdManager {
 
     fun Context.showBannerAd(frameLayout: FrameLayout) {
         if (adModel.isBannerAdActive.not()) return
+        frameLayout.addShimmerForBanner()
         val adView = AdView(this)
         adView.setAdSize(AdSize.BANNER)
         adView.adUnitId = adModel.bannerId
-        frameLayout.addView(adView)
         adView.loadAd(AdRequest.Builder().build())
         adView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(p0: LoadAdError) {
@@ -302,18 +305,29 @@ object CommonAdManager {
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
+                frameLayout.removeAllViews()
+                frameLayout.addView(adView)
                 Log.e("TAG11111", "onAdLoaded: ")
             }
         }
     }
 
-    fun Context.showAdaptiveBannerAd(frameLayout: FrameLayout) {
+    fun Context.showAdaptiveBannerAd(frameLayout: FrameLayout, isCollapsable: Boolean = false) {
         if (adModel.isBannerAdActive.not()) return
+        frameLayout.addShimmerForBanner()
         val adView = AdView(this)
         adView.setAdSize(getAdaptiveBannerWidth())
         adView.adUnitId = adModel.bannerId
-        frameLayout.addView(adView)
-        adView.loadAd(AdRequest.Builder().build())
+        val adRequest = if (isCollapsable) {
+            val extras = Bundle()
+            extras.putString("collapsible", "bottom")
+            AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
+                .build()
+        } else {
+            AdRequest.Builder().build()
+        }
+        adView.loadAd(adRequest)
         adView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
@@ -322,6 +336,7 @@ object CommonAdManager {
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
+                frameLayout.addView(adView)
                 Log.e("TAG11111", "onAdLoaded: ")
             }
         }
@@ -425,7 +440,7 @@ object CommonAdManager {
             val vc = nativeAd.mediaContent?.videoController
             vc?.mute(true)
             if (vc?.hasVideoContent() == true) {
-                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {}
+                vc.videoLifecycleCallbacks = object : VideoLifecycleCallbacks() {}
             }
             nativeAd.let { adView.setNativeAd(it) }
         } catch (e: Exception) {
@@ -515,7 +530,7 @@ object CommonAdManager {
                     adView.mediaView!!.visibility = View.VISIBLE
                 } else {
                     if (adView.mediaView != null) {
-                        adView.mediaView!!.visibility = View.GONE
+                        adView.mediaView?.visibility = View.GONE
                     }
                 }
                 adView.headlineView = adView.findViewById(R.id.adTitle)
@@ -576,6 +591,16 @@ object CommonAdManager {
         val inflater = LayoutInflater.from(this.context)
         val shimmerView = inflater.inflate(
             R.layout.simmer_layout_small,
+            null
+        )
+        removeAllViews()
+        addView(shimmerView)
+    }
+
+    private fun FrameLayout.addShimmerForBanner() {
+        val inflater = LayoutInflater.from(this.context)
+        val shimmerView = inflater.inflate(
+            R.layout.shimmer_banner,
             null
         )
         removeAllViews()
@@ -695,6 +720,8 @@ object CommonAdManager {
     fun isBannerAdIsEnabled() = adModel.isBannerAdActive
 
     fun getBannerId() = adModel.bannerId
+
+    fun getAppOpenId() = adModel.appOpenId
 
     fun getNativeAd() = nativeAd
 
