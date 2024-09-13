@@ -1,11 +1,11 @@
-[![](https://www.jitpack.io/v/Nirav186/commons.svg)](https://www.jitpack.io/#Nirav186/commons)
+[![](https://www.jitpack.io/v/Nirav186/commons.svg)](https://www.jitpack.io/#Nirav186/Nirav-Commons)
 
 ### Download
 
 Gradle:
 ```gradle
 dependencies {
-  implementation("com.github.Nirav186:commons:<latest-version>")
+  implementation("com.github.Nirav186:Nirav-Commons:<latest-version>")
 }
 ```
 
@@ -13,7 +13,7 @@ Maven:
 ```xml
 <dependency>
   <groupId>com.github.Nirav186</groupId>
-  <artifactId>commons</artifactId>
+  <artifactId>Nirav-Commons</artifactId>
   <version>latest-version</version>
 </dependency>
 ```
