@@ -312,7 +312,11 @@ object CommonAdManager {
         }
     }
 
-    fun Context.showAdaptiveBannerAd(frameLayout: FrameLayout, isCollapsable: Boolean = false) {
+    fun Context.showAdaptiveBannerAd(
+        frameLayout: FrameLayout,
+        isCollapsable: Boolean = false,
+        isBottom: Boolean = true
+    ) {
         if (adModel.isBannerAdActive.not()) return
         frameLayout.addShimmerForBanner()
         val adView = AdView(this)
@@ -320,7 +324,8 @@ object CommonAdManager {
         adView.adUnitId = adModel.bannerId
         val adRequest = if (isCollapsable) {
             val extras = Bundle()
-            extras.putString("collapsible", "bottom")
+
+            extras.putString("collapsible", if (isBottom) "bottom" else "top")
             AdRequest.Builder()
                 .addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
                 .build()
