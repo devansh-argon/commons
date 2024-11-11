@@ -3,7 +3,7 @@ package com.nirav.commons.test
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.nirav.commons.ads.CommonAdManager.showAdaptiveBannerAd
+import com.nirav.commons.ads.CommonAdManager.loadAndShowNativeAd
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +16,11 @@ class MainActivity : AppCompatActivity() {
         App().initAds(
             activity = this,
             onAdsInitialized = {
-                showAdaptiveBannerAd(frameLayout,true)
+                frameLayout.loadAndShowNativeAd(
+                    context = this,
+                    isBig = false
+                )
+//                showAdaptiveBannerAd(frameLayout,true)
             }
         )
     }
