@@ -3,20 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ad_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/main_ad_background">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="9dp"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/ad_bg_color"
         android:layout_margin="5dp">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
             android:orientation="vertical">
 
             <LinearLayout
@@ -136,7 +137,8 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </LinearLayout>
+
+        </FrameLayout>
 
     </androidx.cardview.widget.CardView>
 
