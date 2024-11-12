@@ -5,7 +5,7 @@
 Gradle:
 ```gradle
 dependencies {
-  implementation("com.github.Nirav186:Nirav-Commons:<latest-version>")
+  implementation("com.github.Nirav186:commons:<latest-version>")
 }
 ```
 
