@@ -85,8 +85,8 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components.findByName("release"))
                 groupId = "com.github.Nirav186"
-                artifactId = "Nirav-Commons"
-                version = "1.0.1"
+                artifactId = "commons"
+                version = "0.0.2"
             }
         }
 //        repositories {
