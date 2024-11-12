@@ -12,9 +12,9 @@ dependencies {
 Maven:
 ```xml
 <dependency>
-  <groupId>com.github.Nirav186</groupId>
-  <artifactId>Nirav-Commons</artifactId>
-  <version>latest-version</version>
+	    <groupId>com.github.Nirav186</groupId>
+	    <artifactId>commons</artifactId>
+	    <version>Tag</version>
 </dependency>
 ```
 
