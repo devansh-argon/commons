@@ -11,11 +11,11 @@ dependencies {
 
 Maven:
 ```xml
-<dependency>
+	<dependency>
 	    <groupId>com.github.Nirav186</groupId>
 	    <artifactId>commons</artifactId>
 	    <version>Tag</version>
-</dependency>
+	</dependency>
 ```
 
 Use of GDPR Dialog : (put it in Home activity)
