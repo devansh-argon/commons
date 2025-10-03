@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.nirav.commons"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21
@@ -26,18 +26,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.2"
     }
     publishing {
         singleVariant("release") {
@@ -45,16 +39,14 @@ android {
             withJavadocJar()
         }
     }
-    lint {
-        checkReleaseBuilds = false
-        disable += "NullSafeMutableLiveData"
-    }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.gms:play-services-ads-api:24.6.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -68,24 +60,11 @@ dependencies {
 
     //sdp
     implementation("com.intuit.sdp:sdp-android:1.1.1")
-    //sdp
-
-    //ads
-    implementation("com.google.android.gms:play-services-ads:24.6.0")
-    //ads
-
     //gson
     implementation("com.google.code.gson:gson:2.13.2")
-    //gson
-
     //lifecycle
     implementation("androidx.lifecycle:lifecycle-process:2.9.4")
-    //lifecycle
-
-    //compose
-    implementation("androidx.activity:activity-compose:1.9.2")
-    //compose
-
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
     //simmer layout
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
@@ -97,7 +76,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.devansh-argon"
                 artifactId = "commons"
-                version = "0.0.8"
+                version = "0.1.0"
             }
         }
 //        repositories {

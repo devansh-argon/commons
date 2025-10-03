@@ -16,11 +16,6 @@ import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 import java.util.Date
 
-
-interface OnShowAdCompleteListener {
-    fun onShowAdComplete()
-}
-
 class AppOpenAdManager : Application.ActivityLifecycleCallbacks {
 
     private var currentActivity: Activity? = null
