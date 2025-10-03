@@ -45,6 +45,9 @@ android {
             withJavadocJar()
         }
     }
+    lint {
+        checkReleaseBuilds = false
+    }
 }
 
 dependencies {
@@ -93,7 +96,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.devansh-argon"
                 artifactId = "commons"
-                version = "0.0.5"
+                version = "0.0.6"
             }
         }
 //        repositories {
