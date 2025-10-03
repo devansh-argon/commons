@@ -31,7 +31,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -359,7 +358,12 @@ object CommonAdManager {
 
     fun FrameLayout.showNativeAd() {
         nativeAd?.let {
-            setBigNativeAd(this.context, this, true, it)
+            setBigNativeAd(
+                context = this.context,
+                frameLayout = this,
+                nativeAd = it,
+                isShowMedia = true
+            )
         } ?: run {
             loadAndShowNativeAd(this@showNativeAd.context)
         }
@@ -367,20 +371,29 @@ object CommonAdManager {
 
     fun FrameLayout.showExitNativeAd() {
         nativeAd?.let {
-            setBigNativeAd(this.context, this, true, it, true)
+            setBigNativeAd(
+                context = this.context,
+                frameLayout = this,
+                nativeAd = it,
+                isShowMedia = true,
+                isExitDialog = true
+            )
         }
     }
 
     private fun setBigNativeAd(
         context: Context,
         frameLayout: FrameLayout?,
-        isShowMedia: Boolean = true,
         nativeAd: NativeAd,
-        isExitDialog: Boolean = false
+        isShowMedia: Boolean = true,
+        isExitDialog: Boolean = false,
+        isHorizontal: Boolean = false
     ) {
         val inflater = LayoutInflater.from(context)
         val adView: NativeAdView = if (isExitDialog) {
             inflater.inflate(R.layout.exit_dialog_native_ad, null) as NativeAdView
+        } else if (isHorizontal) {
+            inflater.inflate(R.layout.layout_big_native_ad_for_side, null) as NativeAdView
         } else {
             inflater.inflate(R.layout.layout_big_native_ad_mob, null) as NativeAdView
         }
@@ -697,6 +710,49 @@ object CommonAdManager {
                 context.showSmallNativeAd(this, unifiedNativeAd, true)
             }
         })
+        builder.withAdListener(object : AdListener() {
+            override fun onAdClosed() {
+                super.onAdClosed()
+                Log.d("TAG111", "onAdClosed:")
+            }
+
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                super.onAdFailedToLoad(loadAdError)
+                Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
+            }
+
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d("TAG111", "onAdLoaded: ")
+            }
+        })
+        val videoOptions = VideoOptions.Builder()
+            .setStartMuted(true)
+            .build()
+        val adOptions = NativeAdOptions.Builder().setVideoOptions(videoOptions).build()
+        builder.withNativeAdOptions(adOptions)
+        val adLoader = builder.build()
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+
+    fun FrameLayout.loadAndShowNativeAdHorizontally(context: Context, isBig: Boolean = true) {
+        if (adModel.isNativeAdActive.not()) return
+        addShimmer()
+        val builder = AdLoader.Builder(context, adModel.nativeId)
+        builder.forNativeAd { unifiedNativeAd: NativeAd ->
+            if (isBig) {
+                setBigNativeAd(
+                    context = context,
+                    frameLayout = this,
+                    nativeAd = unifiedNativeAd,
+                    isExitDialog = false,
+                    isHorizontal = true,
+                    isShowMedia = true
+                )
+            } else {
+                context.showSmallNativeAd(this, unifiedNativeAd, true)
+            }
+        }
         builder.withAdListener(object : AdListener() {
             override fun onAdClosed() {
                 super.onAdClosed()
