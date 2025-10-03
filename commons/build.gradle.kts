@@ -47,7 +47,7 @@ android {
     }
     lint {
         checkReleaseBuilds = false
-        abortOnError = false
+        disable += "NullSafeMutableLiveData"
     }
 }
 
@@ -97,7 +97,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.devansh-argon"
                 artifactId = "commons"
-                version = "0.0.6"
+                version = "0.0.8"
             }
         }
 //        repositories {
