@@ -1,20 +1,20 @@
-[![](https://www.jitpack.io/v/Nirav186/commons.svg)](https://www.jitpack.io/#Nirav186/commons)
+[![](https://jitpack.io/v/devansh-argon/commons.svg)](https://jitpack.io/#devansh-argon/commons)
 
 ### Download
 
 Gradle:
 ```gradle
 dependencies {
-  implementation("com.github.Nirav186:commons:<latest-version>")
+  implementation("com.github.devansh-argon:commons:<latest-version>")
 }
 ```
 
 Maven:
 ```xml
 	<dependency>
-	    <groupId>com.github.Nirav186</groupId>
+	    <groupId>com.github.devansh-argon</groupId>
 	    <artifactId>commons</artifactId>
-	    <version>Tag</version>
+	    <version>v0.1.1</version>
 	</dependency>
 ```
 
@@ -57,5 +57,8 @@ Use this function to fetch remote configs :
 
 Put below line in colors file to handle colors of button in exit dialog :
 ```kotlin
-<color name="dialogThemeColor">put your theme color</color>
+	<color name="dialogThemeColor">put your theme color</color>
+    <color name="ad_bg_color">#ECFFFF</color>
+    <color name="player_ad_bg_color">#ECFFFF</color>
+    <color name="player_ad_button_color">#047FD6</color>
 ```
