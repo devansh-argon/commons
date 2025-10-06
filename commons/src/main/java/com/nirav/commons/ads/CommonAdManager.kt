@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -21,6 +20,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.toDrawable
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
@@ -46,6 +46,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 import com.google.gson.Gson
 import com.nirav.commons.CommonGdprDialog
 import com.nirav.commons.R
+import com.nirav.commons.ads.utils.DefaultAdListener
 import com.nirav.commons.ads.utils.getAdaptiveBannerWidth
 import com.nirav.commons.databinding.DialogExitBinding
 
@@ -340,6 +341,7 @@ object CommonAdManager {
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
+                frameLayout.removeAllViews()
                 frameLayout.addView(adView)
                 Log.e("TAG11111", "onAdLoaded: ")
             }
@@ -469,34 +471,15 @@ object CommonAdManager {
 
     fun loadNativeAd(
         context: Context,
-        onAdLoaded: (() -> Unit)? = null,
-        onAdLoadFailed: ((String) -> Unit)? = null
+        adListener: AdListener = DefaultAdListener()
     ) {
         if (adModel.isNativeAdActive) {
             if (nativeAd == null) {
-                val builder: AdLoader.Builder?
-                builder = AdLoader.Builder(context, adModel.nativeId)
+                val builder = AdLoader.Builder(context, adModel.nativeId)
                 builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
                     nativeAd = unifiedNativeAd
                 })
-                builder.withAdListener(object : AdListener() {
-                    override fun onAdClosed() {
-                        super.onAdClosed()
-                        Log.d("TAG111", "onAdClosed:")
-                    }
-
-                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                        super.onAdFailedToLoad(loadAdError)
-                        Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
-                        onAdLoadFailed?.invoke(loadAdError.message)
-                    }
-
-                    override fun onAdLoaded() {
-                        super.onAdLoaded()
-                        Log.d("TAG111", "onAdLoaded: ")
-                        onAdLoaded?.invoke()
-                    }
-                })
+                builder.withAdListener(adListener)
                 val videoOptions = VideoOptions.Builder()
                     .setStartMuted(true)
                     .build()
@@ -582,8 +565,6 @@ object CommonAdManager {
                     (adView.advertiserView as TextView?)!!.text = nativeAd.advertiser
                     adView.advertiserView!!.visibility = View.VISIBLE
                 }
-
-                //                adView.setNativeAd(nativeAd);
                 val vc = nativeAd.mediaContent!!.videoController
                 vc.mute(true)
                 if (vc.hasVideoContent()) {
@@ -607,20 +588,14 @@ object CommonAdManager {
 
     private fun FrameLayout.addShimmer() {
         val inflater = LayoutInflater.from(this.context)
-        val shimmerView = inflater.inflate(
-            R.layout.simmer_layout_small,
-            null
-        )
+        val shimmerView = inflater.inflate(R.layout.simmer_layout_small, null)
         removeAllViews()
         addView(shimmerView)
     }
 
     private fun FrameLayout.addShimmerForBanner() {
         val inflater = LayoutInflater.from(this.context)
-        val shimmerView = inflater.inflate(
-            R.layout.shimmer_banner,
-            null
-        )
+        val shimmerView = inflater.inflate(R.layout.shimmer_banner, null)
         removeAllViews()
         addView(shimmerView)
     }
@@ -629,7 +604,7 @@ object CommonAdManager {
         val dialog = Dialog(this)
         val binding = DialogExitBinding.inflate(LayoutInflater.from(this))
         dialog.setContentView(binding.root)
-        val back = ColorDrawable(Color.TRANSPARENT)
+        val back = Color.TRANSPARENT.toDrawable()
         val inset = InsetDrawable(back, 40)
         dialog.window?.setBackgroundDrawable(inset)
         dialog.window?.setLayout(
@@ -693,12 +668,14 @@ object CommonAdManager {
             })
     }
 
-    fun FrameLayout.loadAndShowNativeAd(context: Context, isBig: Boolean = true) {
+    fun FrameLayout.loadAndShowNativeAd(
+        context: Context, isBig: Boolean = true,
+        adListener: AdListener = DefaultAdListener()
+    ) {
         if (adModel.isNativeAdActive.not()) return
         addShimmer()
-        val builder: AdLoader.Builder?
-        builder = AdLoader.Builder(context, adModel.nativeId)
-        builder.forNativeAd(NativeAd.OnNativeAdLoadedListener { unifiedNativeAd: NativeAd ->
+        val builder = AdLoader.Builder(context, adModel.nativeId)
+        builder.forNativeAd { unifiedNativeAd: NativeAd ->
             if (isBig) {
                 setBigNativeAd(
                     context = context,
@@ -709,23 +686,8 @@ object CommonAdManager {
             } else {
                 context.showSmallNativeAd(this, unifiedNativeAd, true)
             }
-        })
-        builder.withAdListener(object : AdListener() {
-            override fun onAdClosed() {
-                super.onAdClosed()
-                Log.d("TAG111", "onAdClosed:")
-            }
-
-            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                super.onAdFailedToLoad(loadAdError)
-                Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
-            }
-
-            override fun onAdLoaded() {
-                super.onAdLoaded()
-                Log.d("TAG111", "onAdLoaded: ")
-            }
-        })
+        }
+        builder.withAdListener(adListener)
         val videoOptions = VideoOptions.Builder()
             .setStartMuted(true)
             .build()
@@ -735,7 +697,11 @@ object CommonAdManager {
         adLoader.loadAd(AdRequest.Builder().build())
     }
 
-    fun FrameLayout.loadAndShowNativeAdHorizontally(context: Context, isBig: Boolean = true) {
+    fun FrameLayout.loadAndShowNativeAdHorizontally(
+        context: Context,
+        isBig: Boolean = true,
+        adListener: AdListener = DefaultAdListener()
+    ) {
         if (adModel.isNativeAdActive.not()) return
         addShimmer()
         val builder = AdLoader.Builder(context, adModel.nativeId)
@@ -750,25 +716,14 @@ object CommonAdManager {
                     isShowMedia = true
                 )
             } else {
-                context.showSmallNativeAd(this, unifiedNativeAd, true)
+                context.showSmallNativeAd(
+                    frameLayout = this,
+                    nativeAd = unifiedNativeAd,
+                    isShowMedia = true
+                )
             }
         }
-        builder.withAdListener(object : AdListener() {
-            override fun onAdClosed() {
-                super.onAdClosed()
-                Log.d("TAG111", "onAdClosed:")
-            }
-
-            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                super.onAdFailedToLoad(loadAdError)
-                Log.d("TAG111", "onAdFailedToLoad: ${loadAdError.message}")
-            }
-
-            override fun onAdLoaded() {
-                super.onAdLoaded()
-                Log.d("TAG111", "onAdLoaded: ")
-            }
-        })
+        builder.withAdListener(adListener)
         val videoOptions = VideoOptions.Builder()
             .setStartMuted(true)
             .build()

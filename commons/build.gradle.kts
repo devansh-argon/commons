@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 21
-        version = "0.5.0"
+        version = "0.5.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -76,7 +76,7 @@ afterEvaluate {
                 from(components.findByName("release"))
                 groupId = "com.github.devansh-argon"
                 artifactId = "commons"
-                version = "0.1.0"
+                version = "0.1.1"
             }
         }
 //        repositories {
